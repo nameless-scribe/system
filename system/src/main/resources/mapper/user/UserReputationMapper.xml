@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.user.mapper.UserReputationMapper">
+
+    <resultMap id="UserReputationResultMap" type="com.system.user.entity.UserReputation">
+        <id property="userId" column="user_id"/>
+        <result property="totalScore" column="total_score"/>
+        <result property="totalCount" column="total_count"/>
+        <result property="goodCount" column="good_count"/>
+        <result property="score" column="score"/>
+        <result property="level" column="level"/>
+        <result property="positiveRate" column="positive_rate"/>
+        <result property="lastCalcTime" column="last_calc_time"/>
+    </resultMap>
+
+    <select id="selectByUserId" resultMap="UserReputationResultMap">
+        select *
+        from user_reputation
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.system.user.entity.UserReputation">
+        insert into user_reputation(user_id, total_score, total_count, good_count, score, level, positive_rate, last_calc_time)
+        values (#{userId}, #{totalScore}, #{totalCount}, #{goodCount}, #{score}, #{level}, #{positiveRate}, now())
+    </insert>
+
+    <update id="update" parameterType="com.system.user.entity.UserReputation">
+        update user_reputation
+        set total_score   = #{totalScore},
+            total_count   = #{totalCount},
+            good_count    = #{goodCount},
+            score         = #{score},
+            level         = #{level},
+            positive_rate = #{positiveRate},
+            last_calc_time = now()
+        where user_id = #{userId}
+    </update>
+
+</mapper>
+

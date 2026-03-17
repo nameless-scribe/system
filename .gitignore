@@ -1,0 +1,84 @@
+# =========================
+# 通用
+# =========================
+.DS_Store
+Thumbs.db
+*.log
+logs/
+log/
+
+# 临时文件/缓存
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# =========================
+# Java / Maven / Spring Boot
+# =========================
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/*.nar
+
+# Maven Wrapper（保留脚本，忽略下载缓存）
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot 运行生成
+**/hs_err_pid*.log
+
+# =========================
+# Node / Vue
+# =========================
+**/node_modules/
+**/dist/
+**/.cache/
+**/.eslintcache
+**/.pnpm-store/
+
+# npm/yarn/pnpm 调试日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# IDE（按需补充）
+# =========================
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+.vscode/
+
+# =========================
+# Cursor / 本地工具
+# =========================
+.cursor/
+
+# =========================
+# 环境变量/密钥（切勿提交）
+# =========================
+.env
+.env.*
+*.pem
+*.key
+*.crt
+
+# =========================
+# 你项目中的本地上传/临时目录（不建议入库）
+# =========================
+system/upload_img/
+system/upload_temp/
+
+# =========================
+# Windows / PowerShell
+# =========================
+Desktop.ini
+*.lnk
+

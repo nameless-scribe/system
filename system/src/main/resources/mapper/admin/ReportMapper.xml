@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.admin.mapper.ReportMapper">
+
+    <resultMap id="ReportResultMap" type="com.system.admin.entity.Report">
+        <id property="id" column="id"/>
+        <result property="reporterId" column="reporter_id"/>
+        <result property="targetType" column="target_type"/>
+        <result property="targetId" column="target_id"/>
+        <result property="targetName" column="target_name"/>
+        <result property="reason" column="reason"/>
+        <result property="status" column="status"/>
+        <result property="result" column="result"/>
+        <result property="createTime" column="create_time"/>
+        <result property="handleTime" column="handle_time"/>
+        <result property="handlerId" column="handler_id"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.system.admin.entity.Report" useGeneratedKeys="true" keyProperty="id">
+        insert into report(reporter_id, target_type, target_id, reason, status, create_time)
+        values (#{reporterId}, #{targetType}, #{targetId}, #{reason}, #{status}, now())
+    </insert>
+
+    <select id="selectAll" resultMap="ReportResultMap">
+        select r.*,
+               case
+                   when r.target_type = 'USER' then u.username
+                   when r.target_type = 'GOODS' then g.name
+                   else null
+                   end                                             as target_name
+        from report r
+                 left join user u on r.target_type = 'USER' and r.target_id = u.id
+                 left join goods g on r.target_type = 'GOODS' and r.target_id = g.id
+        order by r.status asc, r.create_time desc
+    </select>
+
+    <select id="selectById" resultMap="ReportResultMap">
+        select *
+        from report
+        where id = #{id}
+    </select>
+
+    <update id="update" parameterType="com.system.admin.entity.Report">
+        update report
+        set status     = #{status},
+            result     = #{result},
+            handle_time = #{handleTime},
+            handler_id = #{handlerId}
+        where id = #{id}
+    </update>
+
+</mapper>
+

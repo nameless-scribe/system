@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.user.mapper.UserProfileMapper">
+
+    <resultMap id="UserProfileResultMap" type="com.system.user.entity.UserProfile">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="realName" column="real_name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="birthday" column="birthday"/>
+        <result property="age" column="age"/>
+        <result property="gender" column="gender"/>
+        <result property="avatar" column="avatar"/>
+        <result property="intro" column="intro"/>
+    </resultMap>
+
+    <select id="selectByUserId" resultMap="UserProfileResultMap">
+        select *
+        from user_profile
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.system.user.entity.UserProfile" useGeneratedKeys="true" keyProperty="id">
+        insert into user_profile(
+            user_id, real_name, phone, email, birthday, age, gender, avatar, intro
+        ) values (
+                 #{userId}, #{realName}, #{phone}, #{email}, #{birthday}, #{age}, #{gender}, #{avatar}, #{intro}
+             )
+    </insert>
+
+    <update id="updateByUserId" parameterType="com.system.user.entity.UserProfile">
+        update user_profile
+        set real_name = #{realName},
+            phone     = #{phone},
+            email     = #{email},
+            birthday  = #{birthday},
+            age       = #{age},
+            gender    = #{gender},
+            avatar    = #{avatar},
+            intro     = #{intro}
+        where user_id = #{userId}
+    </update>
+
+</mapper>
+

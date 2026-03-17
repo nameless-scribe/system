@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.rbac.mapper.PermissionMapper">
+
+    <resultMap id="PermissionResultMap" type="com.system.rbac.entity.Permission">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="module" column="module"/>
+        <result property="type" column="type"/>
+        <result property="status" column="status"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="PermissionResultMap">
+        select id, code, name, module, type, status, sort, remark
+        from sys_permission
+        order by sort asc, id desc
+    </select>
+
+    <select id="selectById" resultMap="PermissionResultMap">
+        select id, code, name, module, type, status, sort, remark
+        from sys_permission
+        where id = #{id}
+    </select>
+
+    <select id="selectByCode" resultMap="PermissionResultMap">
+        select id, code, name, module, type, status, sort, remark
+        from sys_permission
+        where code = #{code}
+    </select>
+
+    <insert id="insert" parameterType="com.system.rbac.entity.Permission">
+        insert into sys_permission(id, code, name, module, type, status, sort, remark)
+        values (#{id}, #{code}, #{name}, #{module}, #{type}, #{status}, #{sort}, #{remark})
+    </insert>
+
+    <update id="update" parameterType="com.system.rbac.entity.Permission">
+        update sys_permission
+        set code   = #{code},
+            name   = #{name},
+            module = #{module},
+            type   = #{type},
+            status = #{status},
+            sort   = #{sort},
+            remark = #{remark}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from sys_permission where id = #{id}
+    </delete>
+
+    <select id="selectCodesByUserId" resultType="java.lang.String">
+        select distinct p.code
+        from sys_user_role ur
+                 join sys_role_permission rp on ur.role_id = rp.role_id
+                 join sys_permission p on rp.permission_id = p.id
+        where ur.user_id = #{userId}
+          and p.status = 1
+    </select>
+
+</mapper>
+

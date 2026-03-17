@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.rbac.mapper.RoleMapper">
+
+    <resultMap id="RoleResultMap" type="com.system.rbac.entity.Role">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="status" column="status"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="RoleResultMap">
+        select id, code, name, status, sort, remark
+        from sys_role
+        order by sort asc, id desc
+    </select>
+
+    <select id="selectById" resultMap="RoleResultMap">
+        select id, code, name, status, sort, remark
+        from sys_role
+        where id = #{id}
+    </select>
+
+    <select id="selectByCode" resultMap="RoleResultMap">
+        select id, code, name, status, sort, remark
+        from sys_role
+        where code = #{code}
+    </select>
+
+    <insert id="insert" parameterType="com.system.rbac.entity.Role">
+        insert into sys_role(id, code, name, status, sort, remark)
+        values (#{id}, #{code}, #{name}, #{status}, #{sort}, #{remark})
+    </insert>
+
+    <update id="update" parameterType="com.system.rbac.entity.Role">
+        update sys_role
+        set code   = #{code},
+            name   = #{name},
+            status = #{status},
+            sort   = #{sort},
+            remark = #{remark}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from sys_role where id = #{id}
+    </delete>
+
+</mapper>
+

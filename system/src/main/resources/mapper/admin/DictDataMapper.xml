@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.admin.mapper.DictDataMapper">
+
+    <resultMap id="DictDataResultMap" type="com.system.admin.entity.DictData">
+        <id property="id" column="id"/>
+        <result property="typeCode" column="type_code"/>
+        <result property="value" column="value"/>
+        <result property="label" column="label"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="color" column="color"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="DictDataResultMap">
+        select id, type_code, value, label, sort, status, color, remark
+        from sys_dict_data
+        order by type_code, sort asc, id asc
+    </select>
+
+    <select id="selectByTypeCode" parameterType="string" resultMap="DictDataResultMap">
+        select id, type_code, value, label, sort, status, color, remark
+        from sys_dict_data
+        where type_code = #{typeCode}
+          and status = 1
+        order by sort asc, id asc
+    </select>
+
+    <insert id="insert" parameterType="com.system.admin.entity.DictData">
+        insert into sys_dict_data(type_code, value, label, sort, status, color, remark)
+        values (#{typeCode}, #{value}, #{label}, #{sort}, #{status}, #{color}, #{remark})
+    </insert>
+
+    <update id="update" parameterType="com.system.admin.entity.DictData">
+        update sys_dict_data
+        set type_code = #{typeCode},
+            value     = #{value},
+            label     = #{label},
+            sort      = #{sort},
+            status    = #{status},
+            color     = #{color},
+            remark    = #{remark}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        delete from sys_dict_data where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.user.mapper.OrderMapper">
+
+    <resultMap id="OrderResultMap" type="com.system.user.entity.Order">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="address" column="address"/>
+        <result property="deleteStatus" column="delete_status"/>
+        <result property="addTime" column="add_time"/>
+        <result property="shipTime" column="ship_time"/>
+        <result property="completeTime" column="complete_time"/>
+        <result property="returnReason" column="return_reason"/>
+        <result property="returnAddress" column="return_address"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.system.user.entity.Order" useGeneratedKeys="true" keyProperty="id">
+        insert into orders(
+            user_id, order_num, total_price, order_status,
+            address, delete_status, add_time, ship_time, complete_time, return_reason, return_address
+        ) values (
+                 #{userId}, #{orderNum}, #{totalPrice}, #{orderStatus},
+                 #{address}, #{deleteStatus}, #{addTime}, #{shipTime}, #{completeTime}, #{returnReason}, #{returnAddress}
+             )
+    </insert>
+
+    <select id="selectByUserId" resultMap="OrderResultMap">
+        select *
+        from orders
+        where user_id = #{userId}
+          and delete_status = 0
+        order by add_time desc
+        limit #{start}, #{size}
+    </select>
+
+    <select id="selectTotalCountByUserId" resultType="int">
+        select count(*)
+        from orders
+        where user_id = #{userId}
+          and delete_status = 0
+    </select>
+
+    <!-- 我卖出的：根据当前用户作为商品发布人(owner_id) 查询订单 -->
+    <select id="selectSoldByOwnerId" resultMap="OrderResultMap">
+        select distinct o.*
+        from orders o
+                 join order_detail d on d.order_id = o.id
+                 join goods g on g.id = d.goods_id
+        where g.owner_id = #{ownerId}
+          and o.delete_status = 0
+        order by o.add_time desc
+        limit #{start}, #{size}
+    </select>
+
+    <select id="selectSoldTotalCountByOwnerId" resultType="int">
+        select count(distinct o.id)
+        from orders o
+                 join order_detail d on d.order_id = o.id
+                 join goods g on g.id = d.goods_id
+        where g.owner_id = #{ownerId}
+          and o.delete_status = 0
+    </select>
+
+    <select id="selectById" resultMap="OrderResultMap">
+        select *
+        from orders
+        where id = #{orderId}
+          and delete_status = 0
+    </select>
+
+    <select id="selectAll" resultMap="OrderResultMap">
+        select *
+        from orders
+        where delete_status = 0
+        <if test="status != null">
+            and order_status = #{status}
+        </if>
+        order by add_time desc
+        limit #{start}, #{size}
+    </select>
+
+    <select id="selectTotalCount" resultType="int">
+        select count(*)
+        from orders
+        where delete_status = 0
+        <if test="status != null">
+            and order_status = #{status}
+        </if>
+    </select>
+
+    <update id="updateStatus">
+        update orders
+        set order_status = #{status}
+        where id = #{orderId}
+    </update>
+
+    <update id="updateStatusAndShipTime">
+        update orders
+        set order_status = #{status},
+            ship_time    = #{shipTime}
+        where id = #{orderId}
+    </update>
+
+    <update id="updateStatusAndCompleteTime">
+        update orders
+        set order_status  = #{status},
+            complete_time = #{completeTime}
+        where id = #{orderId}
+    </update>
+
+    <update id="updateReturnInfo">
+        update orders
+        set order_status   = #{status},
+            return_reason  = #{returnReason},
+            return_address = #{returnAddress}
+        where id = #{orderId}
+    </update>
+
+    <select id="selectIdsToAutoComplete" resultType="long">
+        select id
+        from orders
+        where delete_status = 0
+          and order_status = 2
+          and ship_time is not null
+          and ship_time &lt;= date_sub(now(), interval 7 day)
+    </select>
+
+    <!-- 判断某订单是否属于指定卖家（根据商品 owner_id） -->
+    <select id="countByOrderAndOwner" resultType="int">
+        select count(1)
+        from order_detail d
+                 join goods g on g.id = d.goods_id
+        where d.order_id = #{orderId}
+          and g.owner_id = #{ownerId}
+    </select>
+
+</mapper>
+

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.admin.mapper.AnnouncementMapper">
+
+    <resultMap id="AnnouncementResultMap" type="com.system.admin.entity.Announcement">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="AnnouncementResultMap">
+        select * from announcement order by create_time desc
+    </select>
+
+    <select id="selectPublished" resultMap="AnnouncementResultMap">
+        select * from announcement
+        where status = 1
+        order by create_time desc
+    </select>
+
+    <select id="selectById" resultMap="AnnouncementResultMap">
+        select * from announcement where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.system.admin.entity.Announcement" useGeneratedKeys="true" keyProperty="id">
+        insert into announcement(title, content, create_time, status)
+        values (#{title}, #{content}, now(), #{status})
+    </insert>
+
+    <update id="update" parameterType="com.system.admin.entity.Announcement">
+        update announcement
+        set title = #{title},
+            content = #{content},
+            status = #{status}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from announcement where id = #{id}
+    </delete>
+
+</mapper>
+

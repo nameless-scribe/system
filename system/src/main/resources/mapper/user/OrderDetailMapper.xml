@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.user.mapper.OrderDetailMapper">
+
+    <resultMap id="OrderDetailResultMap" type="com.system.user.entity.OrderDetail">
+        <id property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="count" column="count"/>
+        <result property="price" column="price"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsPath" column="goods_path"/>
+    </resultMap>
+
+    <insert id="batchInsert">
+        insert into order_detail (order_id, goods_id, count, price)
+        values
+        <foreach collection="orderDetails" item="detail" separator=",">
+            (#{detail.orderId}, #{detail.goodsId}, #{detail.count}, #{detail.price})
+        </foreach>
+    </insert>
+
+    <select id="getByOrderId" resultMap="OrderDetailResultMap">
+        select
+            od.id,
+            od.order_id,
+            od.goods_id,
+            od.count,
+            od.price,
+            g.name       as goods_name,
+            g.image_url  as goods_path
+        from order_detail od
+                 left join goods g on od.goods_id = g.id
+        where od.order_id = #{orderId}
+    </select>
+
+</mapper>
+

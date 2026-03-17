@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.admin.mapper.GoodsMapper">
+
+    <resultMap id="GoodsResultMap" type="com.system.admin.entity.Goods">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="stock" column="stock"/>
+        <result property="status" column="status"/>
+        <result property="auditStatus" column="audit_status"/>
+        <result property="auditRemark" column="audit_remark"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="description" column="description"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="conditionLevel" column="condition_level"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="GoodsResultMap">
+        select * from goods where id = #{id} and delete_status = 0
+    </select>
+
+    <select id="selectByIdIncludeDeleted" resultMap="GoodsResultMap">
+        select * from goods where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="GoodsResultMap">
+        select * from goods where delete_status = 0
+    </select>
+
+    <!-- 前台条件查询：按分类、价格区间、新旧程度、排序 -->
+    <select id="selectForShop" resultMap="GoodsResultMap">
+        select *
+        from goods
+        <where>
+            status = 1
+            and audit_status = 1
+            and delete_status = 0
+            <if test="brandId != null">
+                and brand_id = #{brandId}
+            </if>
+            <if test="minPrice != null">
+                and price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                and price &lt;= #{maxPrice}
+            </if>
+            <!-- 预留新旧程度字段：condition_level，需要在表中增加该列 -->
+            <if test="conditionLevel != null">
+                and condition_level = #{conditionLevel}
+            </if>
+        </where>
+        <if test="sort != null">
+            order by
+            <choose>
+                <when test="sort == 'priceAsc'">
+                    price asc
+                </when>
+                <when test="sort == 'priceDesc'">
+                    price desc
+                </when>
+                <!-- 热门：按浏览量从高到低 -->
+                <when test="sort == 'hot'">
+                    view_count desc
+                </when>
+                <!-- 兼容旧参数 popular -->
+                <when test="sort == 'popular'">
+                    view_count desc
+                </when>
+                <!-- 默认：最新发布（按 add_time 倒序） -->
+                <otherwise>
+                    add_time desc
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.system.admin.entity.Goods">
+        insert into goods(name, price, brand_id, stock, status, audit_status, audit_remark,
+                          image_url, description, owner_id, condition_level, view_count, delete_status)
+        values (#{name}, #{price}, #{brandId}, #{stock}, #{status}, #{auditStatus}, #{auditRemark},
+                #{imageUrl}, #{description}, #{ownerId}, #{conditionLevel}, #{viewCount}, #{deleteStatus})
+    </insert>
+
+    <update id="update" parameterType="com.system.admin.entity.Goods">
+        update goods
+        set name            = #{name},
+            price           = #{price},
+            brand_id        = #{brandId},
+            stock           = #{stock},
+            status          = #{status},
+            audit_status    = #{auditStatus},
+            audit_remark    = #{auditRemark},
+            image_url       = #{imageUrl},
+            description     = #{description},
+            owner_id        = #{ownerId},
+            condition_level = #{conditionLevel},
+            view_count      = #{viewCount}
+        where id = #{id}
+          and delete_status = 0
+    </update>
+
+    <!-- 支付订单时安全扣减库存，防止出现负库存 -->
+    <update id="decreaseStock">
+        update goods
+        set stock = stock - #{count}
+        where id = #{id}
+          and stock &gt;= #{count}
+    </update>
+
+    <!-- 退回订单确认取货后回滚库存 -->
+    <update id="increaseStock">
+        update goods
+        set stock = stock + #{count}
+        where id = #{id}
+    </update>
+
+    <!-- 浏览详情时增加浏览量 -->
+    <update id="increaseViewCount">
+        update goods
+        set view_count = ifnull(view_count, 0) + 1
+        where id = #{id}
+    </update>
+
+    <update id="softDeleteById">
+        update goods
+        set delete_status = 1,
+            status = 0
+        where id = #{id}
+          and delete_status = 0
+    </update>
+
+    <!-- 前台：卖家在售商品 -->
+    <select id="selectOnSaleByOwnerId" resultMap="GoodsResultMap">
+        select *
+        from goods
+        where owner_id = #{ownerId}
+          and status = 1
+          and audit_status = 1
+          and delete_status = 0
+        order by view_count desc, id desc
+        limit #{size}
+    </select>
+
+    <select id="countOnSaleByOwnerId" resultType="int">
+        select count(1)
+        from goods
+        where owner_id = #{ownerId}
+          and status = 1
+          and audit_status = 1
+          and delete_status = 0
+    </select>
+
+</mapper>
+

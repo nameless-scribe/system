@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.admin.mapper.BrandMapper">
+
+    <resultMap id="BrandResultMap" type="com.system.admin.entity.Brand">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="logoUrl" column="logo_url"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="BrandResultMap">
+        select * from brand where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BrandResultMap">
+        select * from brand
+    </select>
+
+    <insert id="insert" parameterType="com.system.admin.entity.Brand">
+        insert into brand(name, logo_url, description)
+        values (#{name}, #{logoUrl}, #{description})
+    </insert>
+
+    <update id="update" parameterType="com.system.admin.entity.Brand">
+        update brand
+        set name      = #{name},
+            logo_url  = #{logoUrl},
+            description = #{description}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from brand where id = #{id}
+    </delete>
+
+</mapper>
+

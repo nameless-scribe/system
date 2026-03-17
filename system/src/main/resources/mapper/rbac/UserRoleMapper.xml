@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.rbac.mapper.UserRoleMapper">
+
+    <resultMap id="UserRoleResultMap" type="com.system.rbac.entity.UserRole">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="roleId" column="role_id"/>
+    </resultMap>
+
+    <select id="selectByUserId" resultMap="UserRoleResultMap">
+        select id, user_id, role_id
+        from sys_user_role
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.system.rbac.entity.UserRole">
+        insert into sys_user_role(id, user_id, role_id)
+        values (#{id}, #{userId}, #{roleId})
+    </insert>
+
+    <delete id="deleteByUserId">
+        delete from sys_user_role where user_id = #{userId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.user.mapper.BuyRequestCommentMapper">
+
+    <insert id="insert" parameterType="com.system.user.entity.BuyRequestComment" useGeneratedKeys="true" keyProperty="id">
+        insert into buy_request_comment(request_id, user_id, content, status, create_time)
+        values (#{requestId}, #{userId}, #{content}, #{status}, now())
+    </insert>
+
+    <select id="selectByRequestId" resultType="com.system.user.entity.BuyRequestCommentView">
+        select
+            c.id,
+            c.request_id as requestId,
+            c.user_id as userId,
+            c.content,
+            c.create_time as createTime,
+            u.username,
+            p.avatar
+        from buy_request_comment c
+                 left join user u on u.id = c.user_id
+                 left join user_profile p on p.user_id = c.user_id
+        where c.request_id = #{requestId}
+          and c.status = 1
+        order by c.create_time asc
+    </select>
+
+</mapper>
+
