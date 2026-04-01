@@ -1,8 +1,49 @@
 <template>
-  <div class="user-center">
-    <h2 class="title">个人中心</h2>
-    <el-card>
-      <el-tabs v-model="activeTab">
+  <div class="user-shell">
+    <div class="uc-header">
+      <div>
+        <h2 class="uc-title">个人中心</h2>
+        <div class="uc-subtitle">管理资料、发布、订单与评价</div>
+      </div>
+      <div class="uc-actions">
+        <el-button size="small" @click="$router.push('/goods')">去逛商品</el-button>
+        <el-button size="small" @click="$router.push('/my/items')">发布闲置</el-button>
+      </div>
+    </div>
+
+    <div class="uc-layout">
+      <aside class="uc-left">
+        <el-card shadow="never" class="uc-card">
+          <div class="panel-title"><i class="el-icon-user-solid" /> 我的信息</div>
+          <div class="profile-summary">
+            <el-avatar :size="56" icon="el-icon-user-solid" />
+            <div class="summary-meta">
+              <div class="summary-name">{{ userInfo.username || '用户' }}</div>
+              <div class="summary-sub">
+                {{ userInfo.role === 'ADMIN' ? '管理员' : '普通用户' }}
+              </div>
+            </div>
+          </div>
+          <div class="quick-links">
+            <div class="quick-link" @click="activeTab='profile'">编辑资料</div>
+            <div class="quick-link" @click="activeTab='items'">我发布的</div>
+            <div class="quick-link" @click="activeTab='orders'">我买到的</div>
+            <div class="quick-link" @click="activeTab='sold'">我卖出的</div>
+            <div class="quick-link" @click="activeTab='ratings'">收到的评价</div>
+          </div>
+        </el-card>
+
+        <el-card shadow="never" class="uc-card">
+          <div class="panel-title"><i class="el-icon-guide" /> 快捷入口</div>
+          <div class="quick-link" @click="$router.push('/favorites')">我的收藏</div>
+          <div class="quick-link" @click="$router.push('/cart')">购物车</div>
+          <div class="quick-link" @click="$router.push('/orders')">我的订单</div>
+        </el-card>
+      </aside>
+
+      <main class="uc-main">
+        <el-card shadow="never" class="uc-card">
+          <el-tabs v-model="activeTab">
         <el-tab-pane label="基本信息" name="profile">
           <div class="profile-block">
             <el-form :model="profile" label-width="90px" label-position="left" size="small">
@@ -97,16 +138,18 @@
           <MyItems />
         </el-tab-pane>
         <el-tab-pane label="我买到的" name="orders">
-          <OrderList />
+          <OrderList :embedded="true" />
         </el-tab-pane>
         <el-tab-pane label="我卖出的" name="sold">
-          <SoldOrderList />
+          <SoldOrderList :embedded="true" />
         </el-tab-pane>
         <el-tab-pane label="收到的评价" name="ratings">
           <ReceivedRatings />
         </el-tab-pane>
       </el-tabs>
-    </el-card>
+        </el-card>
+      </main>
+    </div>
   </div>
 </template>
 
@@ -190,16 +233,105 @@ export default {
 </script>
 
 <style scoped>
-.user-center {
-  padding: 8px 0 24px;
+.user-shell {
+  min-height: calc(100vh - 64px);
+  padding: 12px 18px 32px;
   text-align: left;
 }
-.title {
-  margin-bottom: 12px;
+.uc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.uc-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+.uc-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.uc-actions {
+  display: flex;
+  gap: 10px;
+}
+.uc-layout {
+  display: flex;
+  gap: 18px;
+}
+.uc-left {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.uc-main {
+  flex: 1;
+  min-width: 0;
+}
+.uc-card {
+  border-radius: 12px;
+}
+.panel-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.panel-title i {
+  color: var(--primary-color);
+  margin-right: 6px;
+}
+.profile-summary {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.summary-meta {
+  min-width: 0;
+}
+.summary-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.summary-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.quick-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f8fbff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+.quick-link:hover {
+  background: rgba(74, 144, 217, 0.10);
+  color: var(--primary-color);
 }
 .profile-block {
   padding: 12px 0;
   line-height: 1.8;
+}
+@media (max-width: 768px) {
+  .uc-layout {
+    flex-direction: column;
+  }
+  .uc-left {
+    width: 100%;
+  }
 }
 </style>
 

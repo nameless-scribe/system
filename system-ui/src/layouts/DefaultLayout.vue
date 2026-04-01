@@ -1,39 +1,41 @@
 <template>
   <div class="default-layout">
     <header class="top-bar">
-      <div class="left">
-        <div class="logo" @click="$router.push('/')">
-          <span class="logo-mark">🛒</span>
-          <span class="logo-text">电商系统</span>
+      <div class="top-bar-inner">
+        <div class="left">
+          <div class="logo" @click="$router.push('/')">
+            <span class="logo-mark">🛒</span>
+            <span class="logo-text">电商系统</span>
+          </div>
+          <nav class="nav-links">
+            <router-link to="/">首页</router-link>
+            <router-link to="/goods">商品</router-link>
+            <router-link to="/favorites">我的收藏</router-link>
+            <router-link to="/buy-requests">求购广场</router-link>
+            <router-link to="/cart">购物车</router-link>
+            <router-link to="/orders">我的订单</router-link>
+          </nav>
         </div>
-        <nav class="nav-links">
-          <router-link to="/">首页</router-link>
-          <router-link to="/goods">商品</router-link>
-          <router-link to="/favorites">我的收藏</router-link>
-          <router-link to="/buy-requests">求购广场</router-link>
-          <router-link to="/cart">购物车</router-link>
-          <router-link to="/orders">我的订单</router-link>
-        </nav>
-      </div>
-      <div class="auth-links">
-        <template v-if="!isLogin">
-          <router-link to="/login">登录</router-link>
-          <router-link to="/register">注册</router-link>
-        </template>
-        <template v-else>
-          <el-dropdown trigger="hover">
-            <span class="el-dropdown-link">
-              欢迎，{{ user.username }}
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="$router.push('/my/items')">我发布的</el-dropdown-item>
-              <el-dropdown-item @click.native="$router.push('/profile')">个人中心</el-dropdown-item>
-              <el-dropdown-item @click.native="$router.push('/orders')">我的订单</el-dropdown-item>
-              <el-dropdown-item divided @click.native="handleLogout">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
+        <div class="auth-links">
+          <template v-if="!isLogin">
+            <router-link to="/login">登录</router-link>
+            <router-link to="/register">注册</router-link>
+          </template>
+          <template v-else>
+            <el-dropdown trigger="hover">
+              <span class="el-dropdown-link">
+                欢迎，{{ user.username }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="$router.push('/my/items')">我发布的</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/profile')">个人中心</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/orders')">我的订单</el-dropdown-item>
+                <el-dropdown-item divided @click.native="handleLogout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </div>
       </div>
     </header>
     <main class="page-main">
@@ -86,10 +88,24 @@ export default {
   height: 60px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  background:
+    linear-gradient(90deg, rgba(74, 144, 217, 0.08), rgba(255, 255, 255, 0.9)),
+    var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+.top-bar-inner {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-  background: linear-gradient(90deg, #ffffff, #f9fbff);
 }
 .left {
   display: flex;
@@ -100,6 +116,12 @@ export default {
   align-items: center;
   cursor: pointer;
   margin-right: 24px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.logo:hover {
+  background: rgba(74, 144, 217, 0.08);
 }
 .logo-mark {
   font-size: 20px;
@@ -108,28 +130,54 @@ export default {
 .logo-text {
   font-weight: 600;
   font-size: 18px;
-  color: #409eff;
+  color: var(--primary-color);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(233, 236, 239, 0.9);
 }
 .nav-links a,
 .auth-links a {
-  margin: 0 8px;
-  color: #606266;
+  margin: 0;
+  color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+.nav-links a:hover,
+.auth-links a:hover {
+  color: var(--primary-color);
+  background: rgba(74, 144, 217, 0.10);
 }
 .nav-links a.router-link-exact-active,
 .auth-links a.router-link-exact-active {
-  color: #409eff;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-color), #3A7BC8);
+  box-shadow: 0 6px 14px rgba(74, 144, 217, 0.28);
 }
 .auth-links {
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .el-dropdown-link {
   cursor: pointer;
-  color: #606266;
+  color: var(--text-secondary);
+  padding: 10px 18px;
+  border-radius: 999px;
+  transition: all 0.2s ease;
 }
 .el-dropdown-link:hover {
-  color: #409eff;
+  color: var(--primary-color);
+  background: rgba(74, 144, 217, 0.10);
 }
 .page-main {
   flex: 1;
@@ -149,6 +197,25 @@ export default {
   color: #a0a0a0;
   background: #f0f2f5;
   border-top: 1px solid #ebeef5;
+}
+@media (max-width: 992px) {
+  .top-bar {
+    padding: 0 12px;
+  }
+  .top-bar-inner {
+    max-width: none;
+  }
+  .logo {
+    margin-right: 10px;
+  }
+  .nav-links {
+    overflow-x: auto;
+    max-width: 60vw;
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>
 

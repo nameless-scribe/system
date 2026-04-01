@@ -1,4 +1,14 @@
 :root {
+  /* 主题色（普通用户端） */
+  --primary-color: #4A90D9;      /* 主色调-校园蓝 */
+  --accent-color: #FF6B35;       /* 强调色-活力橙 */
+  --success-color: #28C76F;      /* 成功色 */
+  --bg-color: #F5F7FA;           /* 背景色 */
+  --card-bg: #FFFFFF;            /* 卡片背景 */
+  --text-primary: #2C3E50;       /* 主文字 */
+  --text-secondary: #6C757D;     /* 次要文字 */
+  --border-color: #E9ECEF;       /* 边框色 */
+
   --app-bg: #f5f7fb;
   --app-primary: #409eff;
   --app-primary-hover: #66b1ff;
@@ -17,16 +27,16 @@ body {
   padding: 0;
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
-  background-color: var(--app-bg);
-  color: var(--app-text-main);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
 }
 
 a {
-  color: var(--app-primary);
+  color: var(--primary-color);
 }
 
 a:hover {
-  color: var(--app-primary-hover);
+  color: var(--accent-color);
 }
 
 /* 通用页面布局类，方便各个页面统一风格 */

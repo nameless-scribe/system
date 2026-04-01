@@ -1,44 +1,75 @@
 <template>
-  <div class="page fav-page">
-    <div class="page-header">
-      <div>
-        <h2 class="page-title">我的收藏</h2>
-        <div class="page-subtitle">收藏的商品会在这里展示</div>
+  <div class="favorites-page">
+    <div class="market-navbar">
+      <div class="nav-logo" @click="$router.push('/')">校园易物</div>
+      <div class="nav-search">
+        <el-input
+          v-model="query.keyword"
+          placeholder="搜索收藏商品名/卖家..."
+          prefix-icon="el-icon-search"
+          clearable
+        />
+      </div>
+      <div class="nav-actions">
+        <el-button type="text" @click="$router.push('/goods')">商品广场</el-button>
+        <el-button type="text" @click="$router.push('/buy-requests')">求购广场</el-button>
+        <el-button type="primary" @click="$router.push('/my/items')">发布闲置</el-button>
+        <el-button type="text" @click="$router.push('/profile')">个人中心</el-button>
       </div>
     </div>
 
-    <el-card shadow="never" v-loading="loading">
-      <div class="page-toolbar">
-        <el-input v-model="query.keyword" placeholder="搜索商品名/卖家" clearable style="width: 220px" />
-        <el-select v-model="query.status" placeholder="状态" clearable style="width: 160px">
-          <el-option label="有效收藏" value="valid" />
-          <el-option label="无效收藏" value="invalid" />
-        </el-select>
-        <el-select v-model="query.sort" placeholder="排序" style="width: 160px">
-          <el-option label="收藏时间(新)" value="timeDesc" />
-          <el-option label="收藏时间(旧)" value="timeAsc" />
-          <el-option label="价格(低->高)" value="priceAsc" />
-          <el-option label="价格(高->低)" value="priceDesc" />
-        </el-select>
-        <el-button type="primary" icon="el-icon-search" @click="applyFilter">查询</el-button>
-        <el-button icon="el-icon-refresh" @click="resetFilter">重置</el-button>
-
-        <div style="flex:1"></div>
-        <el-button type="danger" plain :disabled="!multipleSelection.length" @click="onBatchRemove">
-          批量取消（{{ multipleSelection.length }}）
-        </el-button>
-        <el-button type="warning" plain icon="el-icon-delete" @click="onCleanupInvalid">
-          清理无效收藏
-        </el-button>
+    <div class="fav-content">
+      <div class="header">
+        <div>
+          <h2 class="header-title">我的收藏</h2>
+          <p class="header-subtitle">收藏的商品会在这里展示，可筛选、批量取消与清理无效收藏</p>
+        </div>
+        <div class="header-meta">
+          <span class="meta-pill">共 <strong>{{ filteredList.length }}</strong> 条收藏</span>
+        </div>
       </div>
 
-      <el-table
-        :data="filteredList"
-        border
-        stripe
-        style="width: 100%"
-        @selection-change="onSelectionChange"
-      >
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="sidebar-section">
+            <div class="sidebar-title">状态筛选</div>
+            <el-select v-model="query.status" placeholder="状态" clearable size="small" style="width:100%">
+              <el-option label="有效收藏" value="valid" />
+              <el-option label="无效收藏" value="invalid" />
+            </el-select>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-title">排序方式</div>
+            <el-select v-model="query.sort" placeholder="排序" size="small" style="width:100%">
+              <el-option label="收藏时间(新)" value="timeDesc" />
+              <el-option label="收藏时间(旧)" value="timeAsc" />
+              <el-option label="价格(低->高)" value="priceAsc" />
+              <el-option label="价格(高->低)" value="priceDesc" />
+            </el-select>
+          </div>
+          <div class="sidebar-section">
+            <el-button type="primary" size="small" class="apply-btn" @click="applyFilter">查询</el-button>
+            <el-button size="small" class="reset-btn" @click="resetFilter">重置</el-button>
+          </div>
+          <div class="sidebar-section">
+            <el-button type="danger" plain size="small" class="apply-btn" :disabled="!multipleSelection.length" @click="onBatchRemove">
+              批量取消（{{ multipleSelection.length }}）
+            </el-button>
+            <el-button type="warning" plain size="small" class="reset-btn" @click="onCleanupInvalid">
+              清理无效收藏
+            </el-button>
+          </div>
+        </aside>
+
+        <main class="main-content">
+          <el-card shadow="never" v-loading="loading">
+            <el-table
+              :data="filteredList"
+              border
+              stripe
+              style="width: 100%"
+              @selection-change="onSelectionChange"
+            >
         <el-table-column type="selection" width="48" />
         <el-table-column label="商品" min-width="320">
           <template slot-scope="scope">
@@ -87,10 +118,29 @@
             <el-button type="text" style="color:red" @click="onRemove(scope.row.goodsId)">取消收藏</el-button>
           </template>
         </el-table-column>
-      </el-table>
+            </el-table>
+            <div v-if="!list.length && !loading" class="empty-text">暂无收藏，去商品页逛逛吧～</div>
+          </el-card>
+        </main>
 
-      <div v-if="!list.length && !loading" class="empty-text">暂无收藏，去商品页逛逛吧～</div>
-    </el-card>
+        <aside class="right-panel">
+          <el-card shadow="never" class="right-card">
+            <div class="panel-title"><i class="el-icon-data-analysis" /> 收藏数据</div>
+            <div class="panel-stat"><span>总收藏</span><b>{{ list.length }}</b></div>
+            <div class="panel-stat"><span>有效收藏</span><b>{{ validCount }}</b></div>
+            <div class="panel-stat"><span>无效收藏</span><b>{{ invalidCount }}</b></div>
+            <div class="panel-stat"><span>已选择</span><b>{{ multipleSelection.length }}</b></div>
+          </el-card>
+          <el-card shadow="never" class="right-card">
+            <div class="panel-title"><i class="el-icon-guide" /> 快捷入口</div>
+            <div class="quick-link" @click="$router.push('/goods')">去商品广场继续逛</div>
+            <div class="quick-link" @click="$router.push('/cart')">查看购物车</div>
+            <div class="quick-link" @click="$router.push('/orders')">查看我的订单</div>
+            <div class="quick-link" @click="$router.push('/buy-requests')">浏览求购广场</div>
+          </el-card>
+        </aside>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -141,6 +191,12 @@ export default {
         return new Date(b.createTime).getTime() - new Date(a.createTime).getTime()
       })
       return arr
+    },
+    validCount () {
+      return (this.list || []).filter(i => !this.isInvalid(i)).length
+    },
+    invalidCount () {
+      return (this.list || []).filter(i => this.isInvalid(i)).length
     }
   },
   methods: {
@@ -235,6 +291,149 @@ export default {
 </script>
 
 <style scoped>
+.favorites-page {
+  min-height: calc(100vh - 64px);
+  background: var(--bg-color);
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+.market-navbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  background: var(--card-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 12px;
+}
+.nav-logo {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+.nav-search {
+  flex: 1;
+  max-width: 640px;
+  margin: 0 40px;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fav-content {
+  padding: 12px 18px 32px;
+}
+.header {
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.header-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.meta-pill {
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(74, 144, 217, 0.08);
+  color: var(--primary-color);
+}
+.layout {
+  display: flex;
+  gap: 18px;
+}
+.sidebar {
+  width: 280px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px 14px 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.sidebar-section + .sidebar-section {
+  margin-top: 16px;
+}
+.sidebar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.apply-btn,
+.reset-btn {
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+.reset-btn {
+  margin-top: 8px;
+}
+/* 覆盖 Element 默认的 .el-button + .el-button 左间距，避免同列按钮出现“看起来变窄” */
+.sidebar .el-button + .el-button {
+  margin-left: 0;
+}
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+.right-panel {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.right-card {
+  border-radius: 12px;
+}
+.panel-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.panel-title i {
+  color: var(--primary-color);
+  margin-right: 6px;
+}
+.panel-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border-color);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.panel-stat:last-child {
+  border-bottom: none;
+}
+.panel-stat b {
+  color: var(--primary-color);
+}
+.quick-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f8fbff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+.quick-link + .quick-link {
+  margin-top: 8px;
+}
+.quick-link:hover {
+  background: rgba(74, 144, 217, 0.1);
+  color: var(--primary-color);
+}
 .goods-cell {
   display: flex;
   gap: 12px;
@@ -291,6 +490,22 @@ export default {
   padding: 16px 0;
   color: #909399;
   font-size: 13px;
+}
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  .sidebar,
+  .right-panel {
+    width: 100%;
+  }
+  .market-navbar {
+    padding: 0 12px;
+  }
+  .nav-search {
+    margin: 0 10px;
+    max-width: none;
+  }
 }
 </style>
 
