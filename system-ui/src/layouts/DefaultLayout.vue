@@ -14,6 +14,7 @@
             <router-link to="/buy-requests">求购广场</router-link>
             <router-link to="/cart">购物车</router-link>
             <router-link to="/orders">我的订单</router-link>
+            <router-link v-if="isLogin" to="/my/ratings">我的评价</router-link>
           </nav>
         </div>
         <div class="auth-links">
@@ -31,6 +32,7 @@
                 <el-dropdown-item @click.native="$router.push('/my/items')">我发布的</el-dropdown-item>
                 <el-dropdown-item @click.native="$router.push('/profile')">个人中心</el-dropdown-item>
                 <el-dropdown-item @click.native="$router.push('/orders')">我的订单</el-dropdown-item>
+              <el-dropdown-item @click.native="$router.push('/my/ratings')">我的评价</el-dropdown-item>
                 <el-dropdown-item divided @click.native="handleLogout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>

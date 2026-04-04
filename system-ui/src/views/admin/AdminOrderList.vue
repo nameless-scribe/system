@@ -25,7 +25,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="addTime" label="创建时间" width="180" />
+      <el-table-column prop="addTime" label="创建时间" width="180">
+        <template slot-scope="scope">
+          {{ formatTime(scope.row.addTime) }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="260">
         <template slot-scope="scope">
           <el-button type="text" @click="viewDetail(scope.row.id)">详情</el-button>
@@ -62,6 +66,7 @@ import { fetchAdminOrders, updateOrderStatus } from '@/api/adminOrder'
 import { fetchDictData } from '@/api/dict'
 import { handleError } from '@/utils/error'
 import { orderStatusLabel, orderStatusType } from '@/utils/status'
+import { formatDateTime } from '@/utils/date'
 
 export default {
   name: 'AdminOrderList',
@@ -80,6 +85,9 @@ export default {
     this.loadOrderStatus()
   },
   methods: {
+    formatTime (v) {
+      return formatDateTime(v)
+    },
     async loadOrderStatus () {
       try {
         const res = await fetchDictData('order_status')

@@ -28,7 +28,7 @@
               <div class="info-item"><span>订单号</span><b>{{ order.orderNum }}</b></div>
               <div class="info-item"><span>状态</span><b>{{ statusText(order.orderStatus) }}</b></div>
               <div class="info-item"><span>总金额</span><b class="accent">￥{{ order.totalPrice }}</b></div>
-              <div class="info-item"><span>下单时间</span><b>{{ order.addTime }}</b></div>
+              <div class="info-item"><span>下单时间</span><b>{{ formatTime(order.addTime) }}</b></div>
               <div class="info-item full"><span>收货地址</span><b>{{ order.address }}</b></div>
             </div>
           </el-card>
@@ -45,7 +45,7 @@
           </el-card>
 
           <div class="rate-block" v-if="order">
-            <el-button type="primary" size="small" @click="openRateDialog">评价交易对象</el-button>
+            <el-button type="primary" size="small" @click="openRateDialog">{{ rateBtnText }}</el-button>
           </div>
         </main>
 
@@ -85,10 +85,11 @@
 
 <script>
 import { fetchOrderDetail } from '@/api/order'
-import { addRating } from '@/api/rating'
+import { addRating, updateMyRating, getMyRatingByOrder } from '@/api/rating'
 import { fetchDictData } from '@/api/dict'
 import { handleError } from '@/utils/error'
 import { orderStatusLabel } from '@/utils/status'
+import { formatDateTime } from '@/utils/date'
 
 export default {
   name: 'OrderDetail',
@@ -101,12 +102,16 @@ export default {
         score: 5,
         comment: ''
       },
+      myRating: null,
       orderStatusOptions: {}
     }
   },
   computed: {
     totalCount () {
       return (this.details || []).reduce((sum, d) => sum + Number(d.count || 0), 0)
+    },
+    rateBtnText () {
+      return this.myRating ? '编辑评价' : '评价交易对象'
     }
   },
   created () {
@@ -114,6 +119,9 @@ export default {
     this.loadOrderStatus()
   },
   methods: {
+    formatTime (v) {
+      return formatDateTime(v)
+    },
     async loadOrderStatus () {
       try {
         const res = await fetchDictData('order_status')
@@ -138,6 +146,19 @@ export default {
         if (res && res.code === 200 && res.data) {
           this.order = res.data.order
           this.details = res.data.details || []
+          // 查询我是否已评价该订单
+          try {
+            const r = await getMyRatingByOrder(this.order.id)
+            if (r && r.code === 200) {
+              this.myRating = r.data || null
+              if (this.myRating) {
+                this.rateForm.score = this.myRating.score || 5
+                this.rateForm.comment = this.myRating.comment || ''
+              }
+            }
+          } catch (e) {
+            // 静默
+          }
         }
       } catch (e) {
         handleError(this, e, '加载订单详情失败')
@@ -155,14 +176,26 @@ export default {
         return
       }
       try {
-        await addRating({
-          orderId: this.order.id,
-          toUserId: this.order.userId, // 简化：评价买家，后续可扩展为切换角色
-          score: this.rateForm.score,
-          comment: this.rateForm.comment
-        })
-        this.$message.success('评价已提交')
+        if (this.myRating) {
+          await updateMyRating({
+            orderId: this.order.id,
+            score: this.rateForm.score,
+            comment: this.rateForm.comment
+          })
+          this.$message.success('评价已更新')
+        } else {
+          await addRating({
+            orderId: this.order.id,
+            toUserId: this.order.userId, // 简化：评价买家，后续可扩展为切换角色
+            score: this.rateForm.score,
+            comment: this.rateForm.comment
+          })
+          this.$message.success('评价已提交')
+        }
         this.rateDialogVisible = false
+        // 刷新 myRating 状态
+        const r = await getMyRatingByOrder(this.order.id)
+        this.myRating = r && r.code === 200 ? (r.data || null) : null
       } catch (e) {
         handleError(this, e, '提交评价失败')
       }

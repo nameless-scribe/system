@@ -16,7 +16,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="180" />
+      <el-table-column prop="createTime" label="创建时间" width="180">
+        <template slot-scope="scope">
+          {{ formatTime(scope.row.createTime) }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button type="text" @click="openDialog(scope.row)">编辑</el-button>
@@ -61,6 +65,7 @@ import { fetchAdminAnnouncements, createAnnouncement, updateAnnouncement, delete
 import { fetchDictData } from '@/api/dict'
 import { handleError } from '@/utils/error'
 import { announcementStatusLabel, announcementStatusType } from '@/utils/status'
+import { formatDateTime } from '@/utils/date'
 
 export default {
   name: 'AdminAnnouncementList',
@@ -83,6 +88,9 @@ export default {
     this.loadStatusDict()
   },
   methods: {
+    formatTime (v) {
+      return formatDateTime(v)
+    },
     async loadStatusDict () {
       try {
         const res = await fetchDictData('announcement_status')

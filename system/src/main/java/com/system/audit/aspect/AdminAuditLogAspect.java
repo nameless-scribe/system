@@ -69,6 +69,9 @@ public class AdminAuditLogAspect {
         al.setQueryString(safeStr(request.getQueryString(), 1024));
         al.setRequestBody(truncateArgs(pjp.getArgs()));
 
+
+
+        
         try {
             Object ret = pjp.proceed();
             al.setSuccess(1);

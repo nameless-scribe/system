@@ -41,22 +41,22 @@
         </aside>
 
         <main class="center-content">
-          <h1 class="hero-title">校园闲置交易平台</h1>
-          <p class="hero-subtitle">
-            发布、浏览与管理校园闲置物品，支持前台交易与后台审核管理。
-          </p>
-          <div class="hero-actions">
-            <el-button type="primary" size="medium" @click="$router.push('/goods')">
-              立即逛一逛
-            </el-button>
-            <el-button
-              v-if="!isLogin"
-              size="medium"
-              @click="$router.push('/login')"
-            >
-              登录 / 注册
-            </el-button>
-          </div>
+      <h1 class="hero-title">校园闲置交易平台</h1>
+      <p class="hero-subtitle">
+        发布、浏览与管理校园闲置物品，支持前台交易与后台审核管理。
+      </p>
+      <div class="hero-actions">
+        <el-button type="primary" size="medium" @click="$router.push('/goods')">
+          立即逛一逛
+        </el-button>
+        <el-button
+          v-if="!isLogin"
+          size="medium"
+          @click="$router.push('/login')"
+        >
+          登录 / 注册
+        </el-button>
+      </div>
 
           <div class="quick-entries">
         <div class="entry-card" @click="$router.push('/goods')">
@@ -107,7 +107,7 @@
         </ul>
           </el-card>
 
-          <el-card class="announcement-card" v-if="announcements.length">
+      <el-card class="announcement-card" v-if="announcements.length">
         <div slot="header" class="card-header">
           <span><i class="el-icon-bell icon-inline" /> 平台公告</span>
         </div>
@@ -117,9 +117,9 @@
             <div class="ann-content">{{ item.content }}</div>
           </li>
         </ul>
-          </el-card>
+      </el-card>
 
-          <div class="goods-section">
+      <div class="goods-section">
         <div class="goods-block">
           <h3 class="section-title"><i class="el-icon-medal icon-inline" /> 最新上架</h3>
           <el-carousel

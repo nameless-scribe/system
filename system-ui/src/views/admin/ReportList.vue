@@ -24,7 +24,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="举报时间" width="180" />
+      <el-table-column prop="createTime" label="举报时间" width="180">
+        <template slot-scope="scope">
+          {{ formatTime(scope.row.createTime) }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button type="text" @click="openDialog(scope.row)">处理</el-button>
@@ -65,6 +69,7 @@ import { fetchReports, handleReport } from '@/api/report'
 import { fetchDictData } from '@/api/dict'
 import { handleError } from '@/utils/error'
 import { reportStatusLabel, reportStatusType } from '@/utils/status'
+import { formatDateTime } from '@/utils/date'
 
 export default {
   name: 'AdminReportList',
@@ -86,6 +91,9 @@ export default {
     this.loadStatusDict()
   },
   methods: {
+    formatTime (v) {
+      return formatDateTime(v)
+    },
     async loadStatusDict () {
       try {
         const res = await fetchDictData('report_status')

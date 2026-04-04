@@ -1,8 +1,8 @@
 <template>
   <div class="login-page">
     <div class="login-panel">
-      <div class="login-logo">电商系统后台</div>
-      <div class="login-subtitle">系统登录</div>
+      <div class="login-logo">校园闲置物品平台</div>
+      <div class="login-subtitle">平台登录</div>
       <el-form :model="form" @submit.native.prevent="onSubmit" label-width="0" class="login-form">
         <el-form-item>
           <el-input

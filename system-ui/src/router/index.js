@@ -107,6 +107,12 @@ const routes = [
     meta: { requiresAuth: true, roles: ['USER', 'ADMIN', 'SUPER_ADMIN'] }
   },
   {
+    path: '/my/ratings',
+    name: 'myRatings',
+    component: () => import('../views/user/MyRatings.vue'),
+    meta: { requiresAuth: true, roles: ['USER', 'ADMIN', 'SUPER_ADMIN'] }
+  },
+  {
     path: '/buy-requests',
     name: 'buyRequestSquare',
     component: () => import('../views/buy/BuyRequestSquare.vue')

@@ -21,7 +21,11 @@ export const useUserStore = defineStore('user', {
       try {
         const res = await request({
           url: '/auth/me',
-          method: 'get'
+          method: 'get',
+          headers: {
+            // 静默检查登录态，不在未登录时弹“未登录”提示
+            'X-Silent-Error': '1'
+          }
         })
         if (res && res.code === 200) {
           this.user = res.data
@@ -41,7 +45,10 @@ export const useUserStore = defineStore('user', {
       try {
         const res = await request({
           url: '/auth/myPerms',
-          method: 'get'
+          method: 'get',
+          headers: {
+            'X-Silent-Error': '1'
+          }
         })
         if (res && res.code === 200) {
           this.perms = res.data || []

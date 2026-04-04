@@ -46,5 +46,20 @@ public class RatingServiceImpl implements RatingService {
         int s = size <= 0 ? 10 : Math.min(size, 50);
         return ratingMapper.selectCommentsByGoodsId(goodsId, s);
     }
+
+    @Override
+    public void updateRating(Long id, Integer score, String comment) {
+        ratingMapper.updateById(id, score, comment);
+    }
+
+    @Override
+    public List<Rating> listByFromUser(Long fromUserId) {
+        return ratingMapper.selectByFromUserId(fromUserId);
+    }
+
+    @Override
+    public void deleteById(Long id, Long fromUserId) {
+        ratingMapper.deleteByIdAndFromUser(id, fromUserId);
+    }
 }
 

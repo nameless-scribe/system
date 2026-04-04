@@ -14,5 +14,11 @@ public interface RatingService {
     Rating findByOrderAndFromUser(Long orderId, Long fromUserId);
 
     List<GoodsCommentView> listGoodsComments(Long goodsId, int size);
+
+    void updateRating(Long id, Integer score, String comment);
+
+    List<Rating> listByFromUser(Long fromUserId);
+
+    void deleteById(Long id, Long fromUserId);
 }
 

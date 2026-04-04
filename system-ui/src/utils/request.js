@@ -1,5 +1,6 @@
 import axios from 'axios'
 import router from '@/router'
+import { Message } from 'element-ui'
 
 // 创建 axios 实例
 const service = axios.create({
@@ -33,10 +34,14 @@ service.interceptors.response.use(
   response => {
     // 对响应数据做点什么
     const res = response.data
+    const silent = response && response.config && response.config.headers && response.config.headers['X-Silent-Error']
 
-    // 如果返回的状态码不是200，则视为错误，这里只向上抛出，不再弹窗
+    // 如果返回的状态码不是200，则视为错误，同时给出可见提示
     if (res.code && res.code !== 200) {
       console.error('业务错误:', res.message || '请求失败')
+      if (!silent) {
+        Message.error(res.message || '请求失败')
+      }
       return Promise.reject(new Error(res.message || '请求失败'))
     }
 
@@ -45,6 +50,9 @@ service.interceptors.response.use(
   error => {
     // 对响应错误做点什么
     console.error('响应错误:', error)
+
+    const cfg = (error && (error.config || (error.response && error.response.config))) || {}
+    const silent = cfg.headers && cfg.headers['X-Silent-Error']
 
     if (error.response) {
       const status = error.response.status
@@ -57,12 +65,19 @@ service.interceptors.response.use(
           query: currentPath && currentPath !== '/login' ? { redirect: currentPath } : {}
         }).catch(() => {})
       } else {
-        // 其它错误只记录日志，不弹浏览器 alert
+        // 其它错误：记录日志并提示
         console.error('HTTP 错误状态码:', status, error.response.data)
+        const apiMsg = (error.response.data && (error.response.data.message || error.response.data.msg)) || ''
+        if (!silent) {
+          Message.error(apiMsg || `请求出错（${status}）`)
+        }
       }
     } else {
-      // 网络错误，同样不弹窗
+      // 网络错误：给出提示
       console.error('网络连接失败，请检查网络')
+      if (!silent) {
+        Message.error('网络连接失败，请检查网络')
+      }
     }
 
     return Promise.reject(error)

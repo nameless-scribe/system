@@ -54,7 +54,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="addTime" label="下单时间" />
+      <el-table-column prop="addTime" label="下单时间">
+        <template slot-scope="scope">
+          {{ formatTime(scope.row.addTime) }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="320">
         <template slot-scope="scope">
           <el-button type="text" @click="goDetail(scope.row.id)">详情</el-button>
@@ -138,6 +142,7 @@ import { fetchUserOrders, completeOrder, returnOrder } from '@/api/order'
 import { fetchDictData } from '@/api/dict'
 import { handleError } from '@/utils/error'
 import { orderStatusLabel, orderStatusType } from '@/utils/status'
+import { formatDateTime } from '@/utils/date'
 
 export default {
   name: 'OrderList',
@@ -179,6 +184,9 @@ export default {
     }
   },
   methods: {
+    formatTime (v) {
+      return formatDateTime(v)
+    },
     async loadOrderStatus () {
       try {
         const res = await fetchDictData('order_status')

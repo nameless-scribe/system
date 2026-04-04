@@ -29,7 +29,11 @@
       </div>
 
       <el-table :data="list" border stripe style="width: 100%">
-        <el-table-column prop="createTime" label="时间" width="180" />
+        <el-table-column prop="createTime" label="时间" width="180">
+          <template slot-scope="scope">
+            {{ formatTime(scope.row.createTime) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="operatorName" label="操作人" width="150" />
         <el-table-column prop="ip" label="IP" width="140" />
         <el-table-column prop="httpMethod" label="方法" width="90" />
@@ -67,7 +71,7 @@
     <el-drawer title="日志详情" :visible.sync="detailVisible" size="45%">
       <div v-if="detail" class="detail">
         <el-descriptions :column="1" border>
-          <el-descriptions-item label="时间">{{ detail.createTime }}</el-descriptions-item>
+          <el-descriptions-item label="时间">{{ formatTime(detail.createTime) }}</el-descriptions-item>
           <el-descriptions-item label="操作人">{{ detail.operatorName }}</el-descriptions-item>
           <el-descriptions-item label="用户ID">{{ detail.operatorId }}</el-descriptions-item>
           <el-descriptions-item label="旧角色">{{ detail.operatorRole }}</el-descriptions-item>
@@ -93,6 +97,7 @@
 <script>
 import { fetchAuditLogs, fetchAuditLogDetail } from '@/api/auditLog'
 import { handleError } from '@/utils/error'
+import { formatDateTime } from '@/utils/date'
 
 export default {
   name: 'AdminAuditLogList',
@@ -116,6 +121,9 @@ export default {
     this.load()
   },
   methods: {
+    formatTime (v) {
+      return formatDateTime(v)
+    },
     async load () {
       try {
         const params = {

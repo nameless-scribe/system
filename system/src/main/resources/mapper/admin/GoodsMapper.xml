@@ -29,7 +29,16 @@
     </select>
 
     <select id="selectAll" resultMap="GoodsResultMap">
-        select * from goods where delete_status = 0
+        select *
+        from goods
+        where delete_status = 0
+        order by
+            /* 待审核优先，其次按最新时间/ID倒序 */
+            case when audit_status = 0 then 0 else 1 end,
+            /* 若表含 add_time 列则优先按发布时间倒序，否则按 id 倒序 */
+            /* 兼容：多数 MySQL 会允许同时存在，次序上 id 兜底 */
+            add_time desc,
+            id desc
     </select>
 
     <!-- 前台条件查询：按分类、价格区间、新旧程度、排序 -->

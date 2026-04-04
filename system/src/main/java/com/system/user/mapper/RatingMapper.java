@@ -22,5 +22,13 @@ public interface RatingMapper {
      */
     List<GoodsCommentView> selectCommentsByGoodsId(@Param("goodsId") Long goodsId,
                                                    @Param("size") int size);
+
+    void updateById(@Param("id") Long id,
+                    @Param("score") Integer score,
+                    @Param("comment") String comment);
+
+    List<Rating> selectByFromUserId(@Param("fromUserId") Long fromUserId);
+
+    void deleteByIdAndFromUser(@Param("id") Long id, @Param("fromUserId") Long fromUserId);
 }
 

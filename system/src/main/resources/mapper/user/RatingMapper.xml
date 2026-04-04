@@ -52,5 +52,24 @@
         limit #{size}
     </select>
 
+    <update id="updateById">
+        update rating
+        set score = #{score},
+            comment = #{comment}
+        where id = #{id}
+    </update>
+
+    <select id="selectByFromUserId" resultMap="RatingResultMap">
+        select *
+        from rating
+        where from_user_id = #{fromUserId}
+        order by created_time desc
+    </select>
+
+    <delete id="deleteByIdAndFromUser">
+        delete from rating
+        where id = #{id} and from_user_id = #{fromUserId}
+    </delete>
+
 </mapper>
 
