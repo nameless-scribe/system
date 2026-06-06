@@ -34,6 +34,13 @@ public class RbacServiceImpl implements RbacService {
     private RolePermissionMapper rolePermissionMapper;
 
     @Override
+    /**
+     * 根据用户ID查询其拥有的所有权限编码集合
+     * <p>通过用户-角色关联和角色-权限关联，获取该用户所有角色对应的权限编码</p>
+     *
+     * @param userId 用户ID
+     * @return 权限编码集合，若用户ID为空则返回空集合
+     */
     public Set<String> getPermissionCodesByUserId(Long userId) {
         if (userId == null) {
             return Set.of();
@@ -42,6 +49,14 @@ public class RbacServiceImpl implements RbacService {
         return codes == null ? Set.of() : new HashSet<>(codes);
     }
 
+    /**
+     * 判断用户是否拥有指定权限编码
+     * <p>根据用户ID获取其所有权限编码集合，判断是否包含目标权限编码</p>
+     *
+     * @param userId        用户ID
+     * @param permissionCode 权限编码
+     * @return 若用户拥有该权限返回true，否则返回false；权限编码为空时返回false
+     */
     @Override
     public boolean hasPermission(Long userId, String permissionCode) {
         if (permissionCode == null || permissionCode.trim().isEmpty()) {
