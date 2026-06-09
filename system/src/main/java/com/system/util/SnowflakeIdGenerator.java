@@ -35,7 +35,7 @@ public class SnowflakeIdGenerator {
 
     // 静态初始化
     static {
-        // 实际应用中可根据部署环境动态获取机器ID和数据中心ID
+        // 根据部署环境动态获取机器ID和数据中心ID
         workerId = 1L;
         dataCenterId = 1L;
 

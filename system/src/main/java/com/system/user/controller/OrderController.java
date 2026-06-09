@@ -149,7 +149,7 @@ public class OrderController {
     }
 
     /**
-     * 买家：取消待支付订单（保留旧逻辑，如以后不再使用可下线）
+     * 买家：取消待支付订单（保留的旧业务旧逻辑，不再使用）
      */
     @PutMapping("/{id}/cancel")
     public Result<Void> cancel(@PathVariable("id") Long orderId, HttpServletRequest request) {

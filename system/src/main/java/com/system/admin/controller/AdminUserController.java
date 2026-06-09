@@ -33,7 +33,7 @@ public class AdminUserController {
         String operatorRole = currentAdmin.getRole() == null ? "" : currentAdmin.getRole();
         String targetRole = user.getRole() == null ? "USER" : user.getRole();
 
-        // 只有 SUPER_ADMIN 才能创建管理员或超级管理员账号
+        // 只有 SUPER_ADMIN 才能创建管理员账号
         if (("ADMIN".equalsIgnoreCase(targetRole) || "SUPER_ADMIN".equalsIgnoreCase(targetRole))
                 && !"SUPER_ADMIN".equalsIgnoreCase(operatorRole)) {
             return Result.fail("只有超级管理员可以创建管理员账号");
@@ -86,7 +86,7 @@ public class AdminUserController {
         String operatorRole = currentAdmin.getRole() == null ? "" : currentAdmin.getRole();
         String targetRole = target.getRole() == null ? "USER" : target.getRole();
 
-        // 只有超级管理员可以删除管理员或超级管理员账号
+        // 只有超级管理员可以删除管理员账号
         if (("ADMIN".equalsIgnoreCase(targetRole) || "SUPER_ADMIN".equalsIgnoreCase(targetRole))
                 && !"SUPER_ADMIN".equalsIgnoreCase(operatorRole)) {
             return Result.fail("只有超级管理员可以删除管理员用户");
@@ -114,7 +114,7 @@ public class AdminUserController {
         String operatorRole = currentAdmin.getRole() == null ? "" : currentAdmin.getRole();
         String targetRole = target.getRole() == null ? "USER" : target.getRole();
 
-        // 只有超级管理员可以封禁/解封管理员或超级管理员
+        // 只有超级管理员可以封禁/解封管理员
         if (("ADMIN".equalsIgnoreCase(targetRole) || "SUPER_ADMIN".equalsIgnoreCase(targetRole))
                 && !"SUPER_ADMIN".equalsIgnoreCase(operatorRole)) {
             return Result.fail("只有超级管理员可以修改管理员用户状态");

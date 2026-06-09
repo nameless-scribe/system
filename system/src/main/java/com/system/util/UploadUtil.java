@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * 文件上传工具（从 SSM 项目迁移）
+ * 文件上传工具
  */
 @Service
 public class UploadUtil {
